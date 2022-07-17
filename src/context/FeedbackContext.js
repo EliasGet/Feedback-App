@@ -1,5 +1,6 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid'
+import Axios from 'axios'
 //This is a context with the feedback state
 
 const FeedbackContext = createContext()
@@ -7,19 +8,25 @@ const FeedbackContext = createContext()
 //Setting a state called feedback and passing it to the provider
 //Then assigning the provider a varriable called FeedbackProvider 
 export const FeedbackProvider = ({ children }) => {
-    const [feedback, setFeedback] = useState([{
-        id: 1,
-        text: "This is Feedback Item 1",
-        rating: 10,
-    }, {
-        id: 1,
-        text: "This is Feedback Item 2",
-        rating: 9,
-    }, {
-        id: 1,
-        text: "This is Feedback Item 3",
-        rating: 7,
-    },])
+    const [feedback, setFeedback] = useState([])
+
+    useEffect(() => { fetchFeedback() }, [])
+
+    const fetchFeedback = () => {
+        Axios.get('http://localhost:5000/feedback?_sort=id&_order=desc')
+            .then((response) => {
+                setFeedback(response.json())
+            })
+    }
+
+    // const fetchFeedback = async () => {
+    //const response = await fetch ('http://localhost:5000/feedback?_sort=id&_order=desc')
+    //const data = await response.json()
+    //     Axios.get('http://localhost:5000/feedback?_sort=id&_order=desc')
+    //         .then((response) => {
+    //             setFeedback(response.data)
+    //         })
+    // }
 
 
     // this state will hold the feedback item which will get updated once
