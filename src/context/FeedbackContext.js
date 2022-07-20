@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect } from "react";
-import { v4 as uuidv4 } from 'uuid'
 import Axios from 'axios'
 //This is a context with the feedback state
 
@@ -19,22 +18,8 @@ export const FeedbackProvider = ({ children }) => {
             setFeedback(data)
         } catch (error) {
             console.log('ERROR:{error}')
-
         }
-
     }
-
-    //const fetchFeedback = async () => {
-    //const response = await fetch ('http://localhost:5000/feedback?_sort=id&_order=desc')
-    //const data = await response.json()
-    //setFeedback(data)
-    //}  
-    //     Axios.get('http://localhost:5000/feedback?_sort=id&_order=desc')
-    //         .then((response) => {
-    //             setFeedback(response.data)
-    //         })
-    // }
-
 
     // this state will hold the feedback item which will get updated once
     // the update button is clicked, it holdes the data to be updated
@@ -54,15 +39,24 @@ export const FeedbackProvider = ({ children }) => {
         }
     }
 
-    // constructing a function called addFeedback which accepts newFeedback 
+    // constructing a async function called addFeedback which accepts newFeedback 
     // object from the FeedbackForm component as a parameter
     // adding feedback
-    const addFeedback = (newFeedback) => {
-        // giving the object id value a unique id
-        newFeedback.id = uuidv4()
+    const addFeedback = async (newFeedback) => {
+
+        const response = await Axios.post('http://localhost:5000/feedback?_sort=id&_order=desc', newFeedback)
+
+        const data = await response.data
+
         // the spread operator(...) let's us to add the rest of feedbacks, otherwise the setFeedback value will over right the whole thing
-        setFeedback([newFeedback, ...feedback])
+        setFeedback([data, ...feedback])
     }
+
+    // {
+    //     method: 'POST'
+    //     headers: { 'content-type': 'application/json' },
+    //     body(newFeedback)
+    // }
 
     //update FeedbackItem (otherwise it adds the new update as a new feedback)
     const updateFeedback = (id, updItem) => {
