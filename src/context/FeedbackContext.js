@@ -12,16 +12,23 @@ export const FeedbackProvider = ({ children }) => {
 
     useEffect(() => { fetchFeedback() }, [])
 
-    const fetchFeedback = () => {
-        Axios.get('http://localhost:5000/feedback?_sort=id&_order=desc')
-            .then((response) => {
-                setFeedback(response.json())
-            })
+    async function fetchFeedback() {
+        try {
+            const result = await Axios.get('http://localhost:5000/feedback?_sort=id&_order=desc')
+            const data = await result.data
+            setFeedback(data)
+        } catch (error) {
+            console.log('ERROR:{error}')
+
+        }
+
     }
 
-    // const fetchFeedback = async () => {
+    //const fetchFeedback = async () => {
     //const response = await fetch ('http://localhost:5000/feedback?_sort=id&_order=desc')
     //const data = await response.json()
+    //setFeedback(data)
+    //}  
     //     Axios.get('http://localhost:5000/feedback?_sort=id&_order=desc')
     //         .then((response) => {
     //             setFeedback(response.data)
