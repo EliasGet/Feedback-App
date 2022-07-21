@@ -30,15 +30,6 @@ export const FeedbackProvider = ({ children }) => {
         edit: false
     })
 
-
-    // deleting feedback
-    const deleteFeedback = (id) => {
-        if (window.confirm('Are you sure you want to delete this feedback?')) {
-
-            setFeedback(feedback.filter((item) => item.id !== id))
-        }
-    }
-
     // constructing a async function called addFeedback which accepts newFeedback 
     // object from the FeedbackForm component as a parameter
     // adding feedback
@@ -52,16 +43,11 @@ export const FeedbackProvider = ({ children }) => {
         setFeedback([data, ...feedback])
     }
 
-    // {
-    //     method: 'POST'
-    //     headers: { 'content-type': 'application/json' },
-    //     body(newFeedback)
-    // }
-
     //update FeedbackItem (otherwise it adds the new update as a new feedback)
-    const updateFeedback = (id, updItem) => {
+    const updateFeedback = async (id, updItem) => {
+        const response = await Axios.put(`http://localhost:5000/feedback?_sort=id&_order=desc/${id}`, updItem)
         setFeedback(feedback.map((item) => (item.id === id ? {
-            ...item, ...updItem
+            ...item, ...response.data
         } : item))
         )
     }
@@ -73,6 +59,23 @@ export const FeedbackProvider = ({ children }) => {
             edit: true
         })
     }
+
+    // deleting feedback
+    // const deleteFeedback = async (id) => {
+    //     if (window.confirm('Are you sure you want to delete this feedback?')) {
+    //         await Axios.delete(`http://localhost:5000/feedback?_sort=id&_order=desc/${id}`)
+    //         setFeedback(feedback.filter((item) => item.id !== id))
+    //     }
+    // }
+
+    const deleteFeedback = async (id) => {
+        if (window.confirm('Are you sure you want to delete this feedback?')) {
+            await Axios.delete(`http://localhost:5000/feedback?_sort=id&_order=desc/${id}`)
+            setFeedback(feedback.filter((item) => item.id !== id))
+        }
+    }
+
+
 
     return (
         <FeedbackContext.Provider value={{
